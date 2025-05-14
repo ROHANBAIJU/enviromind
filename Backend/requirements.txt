@@ -7,3 +7,4 @@ requests==2.31.0
 googletrans==4.0.0rc1
 google-generativeai==0.3.2
 gunicorn==20.1.0
+python-dotenv
