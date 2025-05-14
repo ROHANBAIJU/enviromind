@@ -243,17 +243,15 @@ export default function DashboardPage() {
             <CardDescription>Learn how to use EnviroMind's features</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="aspect-video w-full max-w-2xl mx-auto bg-slate-200 dark:bg-zinc-900 rounded-lg flex items-center justify-center">
-              <div className="text-center">
-                <p className="text-muted-foreground mb-2">Tutorial Video Placeholder</p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors"
-                >
-                  Play Video
-                </Button>
-              </div>
+            <div className="aspect-video w-full max-w-2xl mx-auto rounded-lg overflow-hidden">
+              <iframe
+                className="w-full h-full"
+                src="https://www.youtube.com/embed/dVqmA10NggA"
+                title="EnviroMind Tutorial Video"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
             </div>
           </CardContent>
         </Card>
@@ -870,3 +868,4 @@ export default function DashboardPage() {
     </div>
   )
 }
+
