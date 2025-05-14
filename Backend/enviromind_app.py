@@ -17,13 +17,13 @@ from flask import Flask, request, jsonify
 import google.generativeai as genai
 from googletrans import Translator
 import os
-from dotenv import load_dotenv
+
 
 app = Flask(__name__)
 CORS(app)  # Apply CORS to allow cross-origin requests
 
 # Load the pre-trained Keras model
-eco_model = tf.keras.models.load_model("aimodels/plant_disease_model.h5")
+eco_model = tf.keras.models.load_model("Backend/aimodels/trash_classifier.keras")
 
 # Define the material classes
 CLASSES = ["cardboard", "glass", "metal", "paper", "plastic", "trash"]
@@ -93,10 +93,10 @@ def eco_scan():
 
 
 # Load the AI model for plant disease detection PLANT MODE**********************
-plant_model = tf.keras.models.load_model("aimodels/plant_disease_model.h5")
+plant_model = tf.keras.models.load_model("Backend/aimodels/plant_disease_model.h5")
 print("PLANT Model Input Shape:", plant_model.input_shape)  # Debugging info
 # Load class indices
-with open("class_indices/class_indices.json", 'r') as f:
+with open("Backend/class_indices/class_indices.json", 'r') as f:
     class_indices = json.load(f)
 
 # Reverse class indices for lookup
@@ -171,7 +171,7 @@ def agrovision_plantmode():
 
 
 # Load the AI model for soil type detection
-soil_model = tf.keras.models.load_model("aimodels/soilmodel.keras")
+soil_model = tf.keras.models.load_model("enviromind-platform/aimodels/soilmodel.keras")
 print("*****SOIL Model Input Shape:", soil_model.input_shape)  # Debugging info
 
 # Soil information mapping
@@ -225,7 +225,7 @@ def determine_ph_level():
         return {"pH Level": ph_value, "Category": "Alkaline"}
 
 # Flask route for soil type detection
-@app.route('/agrovision/soil_mode', methods=['POST'])
+@app.route('Backend/aimodels/soilmodel.keras', methods=['POST'])
 def agrovision_soilmode():
     if 'file' not in request.files:
         return jsonify({'error': 'No image uploaded'}), 400
@@ -260,7 +260,7 @@ def agrovision_soilmode():
 
 #*********POLLUMAPS FUNCTION FROM HERE**************
 # Air Quality API details
-API_TOKEN = os.getenv('AIR_API_TOKEN')  # Replace with your actual token
+API_TOKEN = 'e44bbb4a767467b169484390a4462695175e74f6'  # Replace with your actual token
 BASE_URL = 'https://api.waqi.info/feed'
 
 @app.route('/worldcitiesaqi', methods=['GET'])
@@ -395,8 +395,8 @@ def get_air_quality():
 #*******Pollumap climate backend starts from here
 
 # Replace with your actual keys
-WEATHERSTACK_API_KEY = os.getenv('WEATHERSTACK_API_KEY')
-AMBEE_API_KEY = os.getenv('AMBEE_API_KEY')
+WEATHERSTACK_API_KEY = '9c630e3ffa8eef2eb1ee1189745dbc62'
+AMBEE_API_KEY = '025d80233a0ae701e604ea3634781879448b7875ed3ed24e89c0695dc899ac8b'
 
 # Function to generate random historical temperatures (°C)
 def generate_random_historical_temps():
@@ -525,7 +525,7 @@ def get_water_quality_data():
 
 # DR R CHATBOT FUNCTIONALITY FROM HERE
 # Gemini setup with correct API version and key
-api_key = os.getenv('GEMINI_API_KEY')
+api_key="AIzaSyB5hg7-tqakTiqYW7walII7YNwACHeKBMc"
 genai.configure(api_key)
 
 # Load the Gemini model
@@ -596,8 +596,7 @@ def chatbot():
     
     
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
-
+    app.run(debug=True)
     
     
     
