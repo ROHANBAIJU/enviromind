@@ -17,7 +17,7 @@ from flask import Flask, request, jsonify
 import google.generativeai as genai
 from googletrans import Translator
 import os
-
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 CORS(app)  # Apply CORS to allow cross-origin requests
@@ -260,7 +260,7 @@ def agrovision_soilmode():
 
 #*********POLLUMAPS FUNCTION FROM HERE**************
 # Air Quality API details
-API_TOKEN = 'e44bbb4a767467b169484390a4462695175e74f6'  # Replace with your actual token
+API_TOKEN = os.getenv('AIR_API_TOKEN')  # Replace with your actual token
 BASE_URL = 'https://api.waqi.info/feed'
 
 @app.route('/worldcitiesaqi', methods=['GET'])
@@ -395,8 +395,8 @@ def get_air_quality():
 #*******Pollumap climate backend starts from here
 
 # Replace with your actual keys
-WEATHERSTACK_API_KEY = '9c630e3ffa8eef2eb1ee1189745dbc62'
-AMBEE_API_KEY = '025d80233a0ae701e604ea3634781879448b7875ed3ed24e89c0695dc899ac8b'
+WEATHERSTACK_API_KEY = os.getenv('WEATHERSTACK_API_KEY')
+AMBEE_API_KEY = os.getenv('AMBEE_API_KEY')
 
 # Function to generate random historical temperatures (°C)
 def generate_random_historical_temps():
@@ -525,7 +525,8 @@ def get_water_quality_data():
 
 # DR R CHATBOT FUNCTIONALITY FROM HERE
 # Gemini setup with correct API version and key
-genai.configure(api_key="AIzaSyB5hg7-tqakTiqYW7walII7YNwACHeKBMc")
+api_key = os.getenv('GEMINI_API_KEY')
+genai.configure(api_key)
 
 # Load the Gemini model
 model = genai.GenerativeModel(model_name="gemini-1.5-flash")  # Make sure this model name is correct!
