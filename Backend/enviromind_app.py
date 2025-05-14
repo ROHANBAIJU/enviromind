@@ -23,7 +23,7 @@ app = Flask(__name__)
 CORS(app)  # Apply CORS to allow cross-origin requests
 
 # Load the pre-trained Keras model
-eco_model = tf.keras.models.load_model("enviromind-platform/aimodels/trash_classifier.keras")
+eco_model = tf.keras.models.load_model("aimodels/plant_disease_model.h5")
 
 # Define the material classes
 CLASSES = ["cardboard", "glass", "metal", "paper", "plastic", "trash"]
@@ -93,10 +93,10 @@ def eco_scan():
 
 
 # Load the AI model for plant disease detection PLANT MODE**********************
-plant_model = tf.keras.models.load_model("enviromind-platform/aimodels/plant_disease_model.h5")
+plant_model = tf.keras.models.load_model("aimodels/plant_disease_model.h5")
 print("PLANT Model Input Shape:", plant_model.input_shape)  # Debugging info
 # Load class indices
-with open("enviromind-platform/class_indices/class_indices.json", 'r') as f:
+with open("class_indices/class_indices.json", 'r') as f:
     class_indices = json.load(f)
 
 # Reverse class indices for lookup
@@ -171,7 +171,7 @@ def agrovision_plantmode():
 
 
 # Load the AI model for soil type detection
-soil_model = tf.keras.models.load_model("enviromind-platform/aimodels/soilmodel.keras")
+soil_model = tf.keras.models.load_model("aimodels/soilmodel.keras")
 print("*****SOIL Model Input Shape:", soil_model.input_shape)  # Debugging info
 
 # Soil information mapping
