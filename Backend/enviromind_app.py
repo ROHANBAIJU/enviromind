@@ -525,8 +525,8 @@ def get_water_quality_data():
 
 # DR R CHATBOT FUNCTIONALITY FROM HERE
 # Gemini setup with correct API version and key
-api_key="AIzaSyB5hg7-tqakTiqYW7walII7YNwACHeKBMc"
-genai.configure(api_key)
+
+genai.configure(api_key="AIzaSyB5hg7-tqakTiqYW7walII7YNwACHeKBMc")
 
 # Load the Gemini model
 model = genai.GenerativeModel(model_name="gemini-1.5-flash")  # Make sure this model name is correct!

@@ -1852,7 +1852,7 @@ export function EcoScanTool({ onClose }) {
             className="data-[state=active]:border-green-500 data-[state=active]:border-b-2 hover:border-green-300 hover:border-b-2 transition-colors"
           >
             <Camera className="h-4 w-4 mr-2" />
-            Scan Items
+            EcoScan Product Material Classifier
           </TabsTrigger>
           <TabsTrigger
             value="revive"
