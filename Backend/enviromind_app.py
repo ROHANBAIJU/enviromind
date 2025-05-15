@@ -225,7 +225,7 @@ def determine_ph_level():
         return {"pH Level": ph_value, "Category": "Alkaline"}
 
 # Flask route for soil type detection
-@app.route('Backend/aimodels/soilmodel.keras', methods=['POST'])
+@app.route('/agrovision/soil_mode', methods=['POST'])
 def agrovision_soilmode():
     if 'file' not in request.files:
         return jsonify({'error': 'No image uploaded'}), 400
