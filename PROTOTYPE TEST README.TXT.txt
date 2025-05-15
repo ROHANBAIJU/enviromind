@@ -47,6 +47,7 @@ This is the backend api end point url, after this link is obtained user must pas
  http//127:*****/chatbot               line 159 in "enviromind\Frontend\components\tools\dr-r.tsx"
 
  
+The line numbers are based on the code editor Visual Studio Code
 
 
 
