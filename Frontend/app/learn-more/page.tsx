@@ -486,7 +486,6 @@ export default function LearnMorePage() {
                 <li>Next.js for server-side rendering and routing</li>
                 <li>Tailwind CSS for responsive design</li>
                 <li>TypeScript for type-safe code</li>
-                <li>Three.js for interactive 3D visualizations</li>
               </ul>
             </div>
 
@@ -496,8 +495,6 @@ export default function LearnMorePage() {
                 <li>Python for data processing and AI models</li>
                 <li>Flask for RESTful API development</li>
                 <li>Firebase for authentication and real-time data</li>
-                <li>Node.js for server-side operations</li>
-                <li>MongoDB and PostgreSQL for data storage</li>
               </ul>
             </div>
 
