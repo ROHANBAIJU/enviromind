@@ -8,7 +8,7 @@ Step 1:  Download the zip file of the entire repository along with all the files
 Step 2: Install nodejs, python 3.12 or greater, pnpm. (Refer Chatgpt or youtube for tutorials).
 
 
-Step 3: Open a terminal and navigate to the Frontend directory where the frontend files are installed, and run the command "pnpm install"(this installs all frontend libraries and dependencies from package.json)
+Step 3: Open a terminal and navigate to the Frontend directory where the frontend files are installed, and run the command "pnpm install"(this installs all frontend libraries and dependencies from packages.json)
 
 
 Step 4: For the Backend, first open another terminal and navigate to the python directory which you are using as an interpreter and run the pip install command in your python installed directory to install the neccessary libraries for the backend.The neccessary libraries will be available from Requirements.txt which is present in the Backend Folder.
