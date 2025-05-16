@@ -21,7 +21,6 @@ Step 5: Open enviromind_app.py in Backend Directory and run the script to turn o
 Step 6: Open another terminal, or in the terminal where you did pnpm install perform "pnpm dev",(the terminal must be in the Frontend directory where the frontend files are downloaded). 
 
 
-
 Step 7: The step 6 process will give two links in the executing terminal by which the webapp can be accessed can be accessed.
 The links will be in the format http//192:***
 
@@ -52,7 +51,10 @@ This is the backend api end point url, after this link is obtained user must pas
 The line numbers are based on the code editor Visual Studio Code
 
 
+Step 10: After successfully changing the above code lines kindly, go to the frontend link (mentioned in step 6 and step 7) and check whether the tools are working and the website is functional.
 
+
+@EnviroMind
 
 
 
