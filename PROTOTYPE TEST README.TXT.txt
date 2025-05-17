@@ -8,7 +8,7 @@ Step 1:  Download the zip file of the entire repository and extract the files in
 Step 2: Install nodejs, python 3.12 or greater, pnpm. (Refer Chatgpt or youtube for tutorials). 
 You can install node js and python directly from www.nodejs.org and www.python.org
 For installing pnpm, install node js first and then run the command 'npm install pnpm' in a terminal.
-After Installing veify their installation by running these commands in a teminal,
+After Installing verify their installation by running these commands in a teminal,
 python --version
 node --version
 pnpm --vesion
