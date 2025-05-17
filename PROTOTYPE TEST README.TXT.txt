@@ -14,7 +14,7 @@ node --version
 pnpm --vesion
 
 
-Step 3: Open your code editor (in this case VS Code) Open the folder where you extracted the zip file of the repository and then open a terminal and navigate to the 'Frontend' directory where the frontend files are installed, and run the command "pnpm install"(this installs all frontend libraries and dependencies from package.json located in 'Frontend/package.json')
+Step 3: Open your code editor (in this case VS Code) Open the folder where you extracted the zip file of the repository and then open a terminal in vs code and run the command "pnpm install"(this installs all frontend libraries and dependencies from package.json located in '/package.json')
 
 
 Step 4: For the Backend, open the enviromind_app.py file located in 'Backend/enviromind_app.py', now create a new virtual environment here by using vs code internal venv creation mechanism.
@@ -39,7 +39,7 @@ INFO:werkzeug: * Restarting with watchdog (windowsapi)
 
 
 
-Step 6: Open another terminal, or in the terminal where you did pnpm install perform "pnpm dev",(the terminal must be in the Frontend directory where the frontend files are downloaded). 
+Step 6: Open another terminal, or in the terminal where you did pnpm install perform "pnpm dev",(the terminal must be in the directory where the frontend files are downloaded). 
 
 
 Step 7: The step 6 process will give two links in the executing terminal by which the webapp can be accessed can be accessed.
@@ -54,19 +54,19 @@ This is the backend api end point url, after this link is obtained user must pas
  
  http//127:*****/eco_scan     line 199 in "enviromind\Frontend\components\tools\eco-scan.tsx"
 
- http//127:*****/agrovision/plant_mode line 686 in "enviromind\Frontend\components\tools\agro-vision.tsx"
+ http//127:*****/agrovision/plant_mode line 686 in "components\tools\agro-vision.tsx"
 
- http//127:*****/agrovision/soil_mode  line 779 in "enviromind\Frontend\components\tools\agro-vision.tsx"
+ http//127:*****/agrovision/soil_mode  line 779 in "components\tools\agro-vision.tsx"
 
- http//127:*****/worldcitiesaqi        line 661 in "enviromind\Frontend\components\tools\pollumap.tsx"
+ http//127:*****/worldcitiesaqi        line 661 in "components\tools\pollumap.tsx"
 
- http//127:*****/pollumap              line 874 in "enviromind\Frontend\components\tools\pollumap.tsx"
+ http//127:*****/pollumap              line 874 in "components\tools\pollumap.tsx"
 
- http//127:*****/get_climate_data      line 952 in "enviromind\Frontend\components\tools\pollumap.tsx"
+ http//127:*****/get_climate_data      line 952 in "components\tools\pollumap.tsx"
 
- http//127:*****/get_water_quality_data line 1006 in "enviromind\Frontend\components\tools\pollumap.tsx"
+ http//127:*****/get_water_quality_data line 1006 in "components\tools\pollumap.tsx"
 
- http//127:*****/chatbot               line 159 in "enviromind\Frontend\components\tools\dr-r.tsx"
+ http//127:*****/chatbot               line 159 in "components\tools\dr-r.tsx"
 
  
 The line numbers are based on the code editor Visual Studio Code
