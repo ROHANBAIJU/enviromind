@@ -49,10 +49,7 @@ The links will be in the format
    - Network:      http://192.*********
 
 
-Step 8: Use the links and go to the website and start using.
-
-
-Step 9: After Running the Backend Server, a link will be provided in flask depending on system to system. The link will be in the format http//127:*****
+Step 8: After Running the Backend Server, a link will be provided in flask depending on system to system. The link will be in the format http//127:*****
 This is the backend api end point url, after this link is obtained user must paste the following lines of code in 
  
  http//127:*****/eco_scan     line 199 in "enviromind\Frontend\components\tools\eco-scan.tsx"
@@ -75,7 +72,7 @@ This is the backend api end point url, after this link is obtained user must pas
 The line numbers are based on the code editor Visual Studio Code
 
 
-Step 10: After successfully changing the above code lines kindly, go to the frontend link (mentioned in step 7) and check whether the tools are working and the website is functional.
+Step 9: After successfully changing the above code lines kindly, go to the frontend link (mentioned in step 7) and check whether the tools are working and the website is functional.
 
 
 @EnviroMind
