@@ -1,3 +1,8 @@
+
+PLEASE REFER PROTOTYPE_TEST.txt in the repository to see how to run it in your computer...
+
+
+
 -**Inspiration**:
 The United Nations’ Sustainable Development Goals (SDGs) inspired us to create a platform that bridges technology and environmental consciousness. In a world increasingly driven by consumption and convenience, we wanted to build a tool that not only raises awareness about sustainable practices but also actively enables responsible behavior through AI and data-driven insights.
 
