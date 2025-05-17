@@ -171,7 +171,7 @@ def agrovision_plantmode():
 
 
 # Load the AI model for soil type detection
-soil_model = tf.keras.models.load_model("enviromind-platform/aimodels/soilmodel.keras")
+soil_model = tf.keras.models.load_model("Backend/aimodels/soilmodel.keras")
 print("*****SOIL Model Input Shape:", soil_model.input_shape)  # Debugging info
 
 # Soil information mapping
