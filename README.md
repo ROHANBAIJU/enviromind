@@ -1,3 +1,13 @@
+
+
+
+<p align="center">
+  <img src="assets_readme/welcome.gif" alt="Welcome to EnviroMind" width="600"/>
+</p>
+
+
+
+
 # 🌍 EnviroMind  
 
 A **comprehensive AI-powered web application** that empowers individuals and communities to take meaningful action across **healthcare, agriculture, climate, recycling, and education** — all aligned with the **United Nations Sustainable Development Goals (SDGs).**
