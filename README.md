@@ -2,7 +2,7 @@
 
 
 <p align="center">
-  <img src="assets_readme/welcome.gif" alt="Welcome to EnviroMind" width="600"/>
+  <img src="assets_readme/welcome.gif" alt="Welcome to EnviroMind"/>
 </p>
 
 
