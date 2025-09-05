@@ -44,7 +44,7 @@ We wanted not just to **raise awareness** but to **enable responsible behavior**
 ## ⚙️ What It Does  
 EnviroMind is an **AI-powered platform** with five main tools:  
 
-- **EcoScan** → Barcode scanner + Revive Store for recyclable goods.  
+- **EcoScan** → Bio degradable Material scanner + Revive Store for recyclable goods.  
 - **AgroVision** → Soil scanner + plant disease detection + farmer-to-consumer marketplace.  
 - **Dr R** → Interactive medical chatbot + virtual medical store.  
 - **Madam A** → Curated SDG-related courses.  
@@ -112,6 +112,7 @@ EnviroMind is an **AI-powered platform** with five main tools:
 
 ## 📂 How to Run  
 Please refer to [`PROTOTYPE_TEST.txt`](./PROTOTYPE_TEST.txt) for instructions on running **EnviroMind** locally.  
+Hosting wil be done shortly...
 
 ---
 
