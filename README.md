@@ -1,14 +1,8 @@
-
-
+# 🌍 EnviroMind  
 
 <p align="center">
   <img src="assets_readme/welcome.gif" alt="Welcome to EnviroMind"/>
-</p>
-
-
-
-
-# 🌍 EnviroMind  
+</p>  
 
 A **comprehensive AI-powered web application** that empowers individuals and communities to take meaningful action across **healthcare, agriculture, climate, recycling, and education** — all aligned with the **United Nations Sustainable Development Goals (SDGs).**
 
@@ -35,13 +29,33 @@ EnviroMind brings together **five AI-powered tools**, each addressing specific S
 ---
 
 ## 🎥 Demo  
-(Add your **GIFs/screenshots** here to showcase each feature)  
 
-- **Dr R chatbot** → `![DrR Demo](assets/dr_r.gif)`  
-- **AgroVision crop/soil scanner** → `![AgroVision Demo](assets/agrovision.gif)`  
-- **EcoScan recycling tool** → `![EcoScan Demo](assets/ecoscan.gif)`  
-- **PolluMap live pollution tracker** → `![PolluMap Demo](assets/pollumap.gif)`  
-- **Madam A courses** → `![MadamA Demo](assets/madama.gif)`  
+
+
+<p align="center">
+  <b>♻️ EcoScan – Recycling Assistant</b><br/>
+  <img src="assets_readme/ECOSCAN.gif" alt="EcoScan Demo" width="800"/>
+</p>  
+
+<p align="center">
+  <b>🌾 AgroVision – Crop & Soil Scanner</b><br/>
+  <img src="assets_readme/AGROVISION.gif" alt="AgroVision Demo" width="800"/>
+</p>  
+
+<p align="center">
+  <b>🌍 PolluMap – Real-Time Pollution Tracker</b><br/>
+  <img src="assets_readme/POLLUMAP.gif" alt="PolluMap Demo" width="800"/>
+</p>  
+
+<p align="center">
+  <b>🩺 Dr R – Medical AI Chatbot</b><br/>
+  <img src="assets_readme/DRR.gif" alt="Dr R Demo" width="800"/>
+</p>  
+
+<p align="center">
+  <b>📚 Madam A – Education & Courses</b><br/>
+  <img src="assets_readme/MADAMA.gif" alt="Madam A Demo" width="800"/>
+</p>  
 
 ---
 
@@ -54,7 +68,7 @@ We wanted not just to **raise awareness** but to **enable responsible behavior**
 ## ⚙️ What It Does  
 EnviroMind is an **AI-powered platform** with five main tools:  
 
-- **EcoScan** → Bio degradable Material scanner + Revive Store for recyclable goods.  
+- **EcoScan** → Barcode scanner + Revive Store for recyclable goods.  
 - **AgroVision** → Soil scanner + plant disease detection + farmer-to-consumer marketplace.  
 - **Dr R** → Interactive medical chatbot + virtual medical store.  
 - **Madam A** → Curated SDG-related courses.  
@@ -122,7 +136,6 @@ EnviroMind is an **AI-powered platform** with five main tools:
 
 ## 📂 How to Run  
 Please refer to [`PROTOTYPE_TEST.txt`](./PROTOTYPE_TEST.txt) for instructions on running **EnviroMind** locally.  
-Hosting wil be done shortly...
 
 ---
 
