@@ -15,7 +15,7 @@ import io
 import requests
 from flask import Flask, request, jsonify
 import google.generativeai as genai
-from googletrans import Translator
+#from googletrans import Translator
 import os
 
 
@@ -532,7 +532,7 @@ genai.configure(api_key="AIzaSyB5hg7-tqakTiqYW7walII7YNwACHeKBMc")
 model = genai.GenerativeModel(model_name="gemini-1.5-flash")  # Make sure this model name is correct!
 
 # Google Translate setup
-translator = Translator()
+#translator = Translator()
 
 # Detect if the user is asking environmental or medical queries
 def detect_intent(user_input):
