@@ -11,17 +11,19 @@ A **comprehensive AI-powered web application** that empowers individuals and com
 ## ✨ Project Overview  
 EnviroMind brings together **five AI-powered tools**, each addressing specific SDGs:  
 
-1. **🩺 Dr R** – A medical AI chatbot for health queries, medication info, and quick guidance.  
-   **Aligned with SDG 3: Good Health and Well-Being**  
+
+
+1. **♻️ EcoScan** – A recycling assistant to identify biodegradable materials and promote waste management.  
+   **Aligned with SDG 12: Responsible Consumption and Production** and **SDG 13: Climate Action**  
 
 2. **🌾 AgroVision** – An AI tool for analyzing crop health (leaf disease detection) and soil classification.  
    **Aligned with SDG 2: Zero Hunger** and **SDG 12: Responsible Consumption and Production**  
 
-3. **♻️ EcoScan** – A recycling assistant to identify biodegradable materials and promote waste management.  
-   **Aligned with SDG 12: Responsible Consumption and Production** and **SDG 13: Climate Action**  
-
-4. **🌍 PolluMap** – A pollution tracker with real-time air, water, and climate quality data.  
+3. **🌍 PolluMap** – A pollution tracker with real-time air, water, and climate quality data.  
    **Aligned with SDG 13: Climate Action**, **SDG 11: Sustainable Cities and Communities**, and **SDG 6: Clean Water and Sanitation**  
+
+4. **🩺 Dr R** – A medical AI chatbot for health queries, medication info, and quick guidance.  
+   **Aligned with SDG 3: Good Health and Well-Being**  
 
 5. **📚 Madam A** – An education AI offering courses on sustainability, climate change, and global awareness.  
    **Aligned with SDG 4: Quality Education** and **SDG 13: Climate Action**  
