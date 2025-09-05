@@ -136,6 +136,7 @@ EnviroMind is an **AI-powered platform** with five main tools:
 
 ## 📂 How to Run  
 Please refer to [`PROTOTYPE_TEST.txt`](./PROTOTYPE_TEST.txt) for instructions on running **EnviroMind** locally.  
+Hosting will done soon>>>
 
 ---
 
