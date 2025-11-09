@@ -1,3 +1,43 @@
+# Google Translate: try to import a real translator, but provide a safe fallback
+try:
+    from googletrans import Translator as GoogleTranslator
+    translator = GoogleTranslator()
+    _GT_AVAILABLE = True
+except Exception as _gt_err:
+    # If googletrans (or its dependencies like httpcore) fails to import,
+    # provide a minimal, safe fallback that preserves the expected interface
+    print("⚠️ googletrans import failed, using DummyTranslator:", _gt_err)
+
+    class _DummyDetection:
+        def __init__(self, lang='en'):
+            self.lang = lang
+
+    class _DummyTranslated:
+        def __init__(self, text):
+            self.text = text
+
+    class _DummyTranslator:
+        def detect(self, text):
+            # Best-effort: assume English
+            return _DummyDetection('en')
+
+        def translate(self, text, src='auto', dest='en'):
+            # No-op translation: return same text
+            return _DummyTranslated(text)
+
+    translator = _DummyTranslator()
+    _GT_AVAILABLE = False
+import os
+from dotenv import load_dotenv
+# Load .env located next to this file to ensure correct loading even when CWD changes
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(dotenv_path=dotenv_path)
+if os.path.exists(dotenv_path):
+    print(f"Loaded .env from {dotenv_path}")
+
+# Feature flag: if USE_GENAI is set to 'false' we'll use an offline/canned fallback mode
+USE_GENAI = os.getenv('USE_GENAI', 'true').lower() not in ('0', 'false', 'no')
+print(f"USE_GENAI={USE_GENAI}")
 import numpy as np
 import tensorflow as tf
 from flask import Flask, request, jsonify
@@ -15,6 +55,12 @@ import io
 import requests
 from flask import Flask, request, jsonify
 import google.generativeai as genai
+# For better error diagnostics when Gemini calls fail
+import traceback
+import threading
+from threading import Lock
+import time
+from google.api_core import exceptions as api_exceptions
 #from googletrans import Translator
 import os
 
@@ -23,7 +69,7 @@ app = Flask(__name__)
 CORS(app)  # Apply CORS to allow cross-origin requests
 
 # Load the pre-trained Keras model
-eco_model = tf.keras.models.load_model("Backend/aimodels/trash_classifier.keras")
+eco_model = tf.keras.models.load_model("aimodels/trash_classifier.keras")
 
 # Define the material classes
 CLASSES = ["cardboard", "glass", "metal", "paper", "plastic", "trash"]
@@ -93,10 +139,10 @@ def eco_scan():
 
 
 # Load the AI model for plant disease detection PLANT MODE**********************
-plant_model = tf.keras.models.load_model("Backend/aimodels/plant_disease_model.h5")
+plant_model = tf.keras.models.load_model("aimodels/plant_disease_model.h5")
 print("PLANT Model Input Shape:", plant_model.input_shape)  # Debugging info
 # Load class indices
-with open("Backend/class_indices/class_indices.json", 'r') as f:
+with open("class_indices/class_indices.json", 'r') as f:
     class_indices = json.load(f)
 
 # Reverse class indices for lookup
@@ -171,7 +217,7 @@ def agrovision_plantmode():
 
 
 # Load the AI model for soil type detection
-soil_model = tf.keras.models.load_model("Backend/aimodels/soilmodel.keras")
+soil_model = tf.keras.models.load_model("aimodels/soilmodel.keras")
 print("*****SOIL Model Input Shape:", soil_model.input_shape)  # Debugging info
 
 # Soil information mapping
@@ -526,10 +572,111 @@ def get_water_quality_data():
 # DR R CHATBOT FUNCTIONALITY FROM HERE
 # Gemini setup with correct API version and key
 
-genai.configure(api_key="AIzaSyB5hg7-tqakTiqYW7walII7YNwACHeKBMc")
+# Configure Gemini (read API key from environment)
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyBlrsKPhNxOeQy8NP7BYNBLL4U6VLu5cPI")
+if not os.getenv("GEMINI_API_KEY"):
+    print("⚠️ GEMINI_API_KEY not found in environment, falling back to bundled key (ensure you rotate this before production).")
+genai.configure(api_key=GEMINI_API_KEY)
 
-# Load the Gemini model
-model = genai.GenerativeModel(model_name="gemini-1.5-flash")  # Make sure this model name is correct!
+# Globals for Gemini model management
+model = None
+current_model_name = None
+model_lock = Lock()
+
+# Cooldown flag timestamp to avoid repeated Gemini calls after quota errors
+genai_quota_exhausted_until = 0
+
+
+def gemini_model_lister():
+    """Query GenAI for available models and pick one that supports generateContent.
+    Updates the global `model` and `current_model_name` under lock.
+    """
+    global model, current_model_name
+    try:
+        print("Listing Gemini models...")
+        models = list(genai.list_models())
+        available = []
+        for m in models:
+            # Some model objects expose supported_generation_methods
+            methods = getattr(m, 'supported_generation_methods', None)
+            if methods is None:
+                # try attribute name variation
+                methods = getattr(m, 'supported_methods', [])
+            available.append((m.name, methods))
+
+        print("Found models:")
+        for name, methods in available:
+            print(f" - {name}: {methods}")
+
+        # Pick the first model that supports generateContent
+        chosen = None
+        for name, methods in available:
+            if methods and 'generateContent' in methods:
+                chosen = name
+                break
+
+        if not chosen and available:
+            # fallback to the first model name
+            chosen = available[0][0]
+
+        if not chosen:
+            print("⚠️ No Gemini models available from list_models()")
+            return
+
+        # Update global model
+        with model_lock:
+            if chosen != current_model_name:
+                print(f"Setting Gemini model to: {chosen}")
+                model = genai.GenerativeModel(model_name=chosen)
+                current_model_name = chosen
+            else:
+                print(f"Gemini model unchanged: {chosen}")
+
+    except Exception as e:
+        print("❗ Failed to list Gemini models:", e)
+        traceback.print_exc()
+
+
+def generate_canned_response(translated_input: str, intent: str) -> str:
+    """Return a short, helpful canned response based on simple intent classification.
+    This keeps replies useful while avoiding external API calls.
+    """
+    short = translated_input.strip()
+    if intent == 'environmental':
+        # give concise environmental advice
+        return (
+            "Short environmental guidance: reduce exposure and emissions where possible. "
+            "For air pollution: stay indoors on poor-air days, use N95 masks for high PM2.5, "
+            "and reduce local emissions by avoiding idling and using public transport."
+        )
+    if intent == 'medical':
+        # safe, non-prescriptive medical fallback
+        return (
+            "I can provide general information but I'm not a doctor. For symptoms like fever or severe pain, "
+            "seek medical attention. Maintain hydration, rest, and follow local health guidance."
+        )
+    # general fallback: summarize the query and give a short suggestion
+    summary = (short[:200] + '...') if len(short) > 200 else short
+    return f"Here's a short answer based on your query: {summary}. If you need more detail, enable the AI service."
+
+
+def _model_lister_loop(interval_seconds: int = 600):
+    # Run once immediately, then loop
+    while True:
+        gemini_model_lister()
+        time.sleep(interval_seconds)
+
+
+# Start background thread to refresh model list every 10 minutes
+try:
+    # Run initial listing synchronously
+    gemini_model_lister()
+    t = threading.Thread(target=_model_lister_loop, args=(600,), daemon=True)
+    t.start()
+    print("Started Gemini model lister thread (interval=600s)")
+except Exception as e:
+    print("⚠️ Could not start Gemini model lister thread:", e)
+    traceback.print_exc()
 
 # Google Translate setup
 #translator = Translator()
@@ -547,16 +694,145 @@ def detect_intent(user_input):
     return "general"
 
 
+def gemini_response(translated_input, detected_lang, model_override=None):
+    """Call Gemini to generate a response for translated_input (English).
+    Returns (success, payload, status_code).
+    If success is True, payload is the final text to send to user.
+    If success is False, payload is an error dict and status_code is the HTTP code to return.
+    """
+    global genai_quota_exhausted_until
+
+    # If we've recently seen quota errors, short-circuit
+    now = time.time()
+    if now < genai_quota_exhausted_until:
+        retry_after = int(genai_quota_exhausted_until - now)
+        msg = {
+            'error': 'Gemini currently unavailable due to recent quota limits.',
+            'advice': f'Please retry after {retry_after} seconds or check your GCP quota.'
+        }
+        print("❗ Short-circuiting Gemini call due to recent quota exhaustion")
+        return False, msg, 429
+
+    # If USE_GENAI is disabled, return a small canned heuristic answer so the service always responds
+    if not USE_GENAI:
+        print("USE_GENAI disabled — using canned fallback response")
+        # Simple heuristic replies based on intent
+        intent = detect_intent(translated_input)
+        canned = generate_canned_response(translated_input, intent)
+        if detected_lang != 'en':
+            try:
+                translated_back = translator.translate(canned, src='en', dest=detected_lang).text
+                return True, f"{translated_back}\n\n(English: {canned})", 200
+            except Exception:
+                return True, canned, 200
+
+    # Ensure the prompt is small to limit token usage
+    max_input_chars = 800
+    short_input = translated_input
+    if len(short_input) > max_input_chars:
+        short_input = short_input[:max_input_chars].rsplit(' ', 1)[0] + '...'
+
+    # Build concise prompt (keep it small)
+    prompt = (
+        "You are Dr. R, an expert in environmental science and medicine. "
+        "Answer concisely (<= 120 tokens) without greetings.\n\nQuery: " + short_input
+    )
+
+    # Small generation config to limit output tokens and temperature
+    gen_cfg = {"max_output_tokens": 120, "temperature": 0.2, "candidate_count": 1}
+
+    # Use the selected model under lock (or the override passed in)
+    if model_override is not None:
+        active_model = model_override
+    else:
+        with model_lock:
+            active_model = model
+
+    if active_model is None:
+        print("⚠️ No Gemini model selected, attempting to list models now")
+        try:
+            gemini_model_lister()
+            with model_lock:
+                active_model = model
+        except Exception:
+            active_model = None
+
+    # Retry loop for transient failures (excluding quota exhaustion)
+    attempts = 2
+    backoff_base = 1
+    for attempt in range(attempts + 1):
+        try:
+            if active_model is None:
+                raise RuntimeError("No Gemini model available")
+
+            gem_resp = active_model.generate_content(prompt, generation_config=gen_cfg)
+            english_response = getattr(gem_resp, 'text', None)
+            if not english_response:
+                try:
+                    english_response = gem_resp.candidates[0].content.parts[0].text
+                except Exception:
+                    english_response = str(gem_resp)
+            english_response = english_response.strip()
+            print("Gemini response generated")
+            break
+
+        except api_exceptions.ResourceExhausted as re_err:
+            # Quota exhausted: set a longer cooldown and use fallback answer
+            print("❗ Gemini generate_content ResourceExhausted:", re_err)
+            traceback.print_exc()
+            genai_quota_exhausted_until = time.time() + 300  # cooldown 5 minutes
+            fallback = (
+                "(Fallback) I can't access Gemini right now due to quota limits. "
+                "Here's a concise suggestion based on your query: "
+                + (short_input[:300] + '...')
+            )
+            english_response = fallback
+            break
+
+        except Exception as gem_err:
+            # transient error: retry with backoff, otherwise fallback
+            print(f"⚠️ Gemini attempt {attempt+1} failed:", gem_err)
+            traceback.print_exc()
+            if attempt < attempts:
+                sleep_for = backoff_base * (2 ** attempt) + random.random() * 0.5
+                print(f"Retrying after {sleep_for:.1f}s")
+                time.sleep(sleep_for)
+                continue
+            else:
+                english_response = (
+                    "(Fallback) Gemini unavailable. "
+                    "Here's a short suggestion based on your query: " + (short_input[:300] + '...')
+                )
+                break
+
+    # Translate back to user's language (only if not English)
+    if detected_lang != 'en':
+        try:
+            translated_response = translator.translate(english_response, src='en', dest=detected_lang).text
+            final_combined_response = f"{translated_response}\n\n(English: {english_response})"
+        except Exception as t_err:
+            print("⚠️ Translation of Gemini response failed, returning English only:", t_err)
+            traceback.print_exc()
+            final_combined_response = english_response
+    else:
+        final_combined_response = english_response
+
+    return True, final_combined_response, 200
+
+
 
 @app.route('/chatbot', methods=['POST'])
 def chatbot():
     try:
+        print("reached here 0in chatbot")
         data = request.get_json()
+        print("reached here 1in chatbot")
         user_message = data.get("message", "")
+        print("reached here 2in chatbot")
         if not user_message:
             return jsonify({'error': 'No message provided'}), 400
 
-        # Detect language
+        # Detect language (use translator instance)
         detected_lang = translator.detect(user_message).lang
 
         # Translate to English if necessary
@@ -564,24 +840,44 @@ def chatbot():
 
         # Detect intent
         intent = detect_intent(translated_input)
+        print("reached here 3in chatbot")
 
-        # Prepare prompt
-        prompt = f"""
-        You are Dr. R, a friendly and expert assistant specializing in environmental science and medicine.
-        Respond accurately and clearly to the following query in under 150 words. Don't include greetings in your message:
-        "{translated_input}"
-        """
+        # Try primary model list (on-demand) similar to your FastAPI example
+        primary_models = [
+            'models/gemini-1.5-flash-8b',
+            'models/gemini-1.5-flash-8b-latest',
+            'models/gemini-1.5-flash'
+        ]
+        model_override = None
+        last_err = None
+        for mname in primary_models:
+            try:
+                print(f"Probing model: {mname}")
+                temp_model = genai.GenerativeModel(model_name=mname)
+                # quick health-check request with a tiny prompt and low tokens
+                try:
+                    _r = temp_model.generate_content('Return token OK', generation_config={"max_output_tokens":5})
+                except Exception as e:
+                    # probe failed for this model
+                    last_err = e
+                    print(f"Probe failed for {mname}: {e}")
+                    continue
+                # if we reach here, probe succeeded
+                model_override = temp_model
+                print(f"Using model override: {mname}")
+                break
+            except Exception as e:
+                last_err = e
+                print(f"Could not instantiate probe model {mname}: {e}")
+                continue
 
-        # Generate response from Gemini
-        gemini_response = model.generate_content(prompt)
-        english_response = gemini_response.text.strip()
+        # Ask Gemini for a response using the helper function (handles multilingual output)
+        success, payload, status = gemini_response(translated_input, detected_lang, model_override=model_override)
+        if not success:
+            # payload is an error dict
+            return jsonify(payload), status
 
-        # Translate response back to user's language (only if not English)
-        if detected_lang != 'en':
-            translated_response = translator.translate(english_response, src='en', dest=detected_lang).text
-            final_combined_response = f"{translated_response}\n\n(English: {english_response})"
-        else:
-            final_combined_response = english_response
+        final_combined_response = payload
 
         return jsonify({
             "message": final_combined_response,
